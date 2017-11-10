@@ -91,7 +91,7 @@ public class TClock extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width=getMeasuredWidth();
+        int width= Math.min(getMeasuredWidth(),getMeasuredHeight());
         setMeasuredDimension(width, width);
     }
 
@@ -198,7 +198,7 @@ public class TClock extends View {
         canvas.drawCircle(mWidth/2, mHeight/2, numberHeight/2, mPaint);
         //分钟指针
         canvas.save();
-        canvas.rotate(mMinute * 6, mWidth/2, mHeight/2);
+        canvas.rotate(mMinute * 6 + (float)( mSecond / 10.0), mWidth/2, mHeight/2);
         mPaint.setStrokeWidth(numberWidth * 3);
         mPaint.setStyle(Paint.Style.FILL);
         int x = mWidth/2;
@@ -208,13 +208,13 @@ public class TClock extends View {
 
         //再画时针
         canvas.save();
-        canvas.rotate(mHour * 30 + mMinute / 2, mWidth/2, mHeight/2);
+        canvas.rotate(mHour * 30 + (float)(mMinute / 2.0), mWidth/2, mHeight/2);
         mPaint.setColor(Color.RED);
         mPaint.setStrokeWidth(numberHeight - numberWidth * 2);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         int x2 = mWidth/2;
         int y2 = mHeight/2;
-        canvas.drawLine(x2, y2, x2, y2 - mWidth/5, mPaint);
+        canvas.drawLine(x2, y2, x2, y2 - mWidth/6, mPaint);
         canvas.restore();
 
         //最后画秒针
