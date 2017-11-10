@@ -9,13 +9,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-
-import java.util.Date;
 
 /**
  * Created by Tantian on 2017/11/10.
@@ -43,8 +41,7 @@ public class TClock extends View {
     private int mMinute = 8;
     private int mSecond = 29;
 
-    //
-    private ValueAnimator mValueAnimator;
+//    private ValueAnimator mValueAnimator;
 
 
     public TClock(Context context) {
@@ -85,9 +82,8 @@ public class TClock extends View {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void getTime(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(System.currentTimeMillis()));
-        mHour = calendar.get(Calendar.HOUR);
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+        mHour = calendar.get(Calendar.HOUR_OF_DAY);
         mMinute = calendar.get(Calendar.MINUTE);
         mSecond = calendar.get(Calendar.SECOND);
     }
@@ -105,7 +101,6 @@ public class TClock extends View {
         mWidth = mHeight = w;
         caculatePartSize();
 
-        startRun();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -117,7 +112,7 @@ public class TClock extends View {
         drawClockSuface(canvas);
         drawClockNumber(canvas);
         drawClockPointer(canvas);
-        startRun();
+        invalidate();//重绘
     }
 
     /**
@@ -145,10 +140,6 @@ public class TClock extends View {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.WHITE);
         canvas.drawCircle(mWidth / 2, mHeight / 2, radius, mPaint);
-//
-//        mPaint.setARGB(	255,255,255,255);
-//        RectF rectF = new RectF(padding, padding * 2, mWidth - padding, mHeight - padding*2);
-//        canvas.drawOval(rectF, mPaint);
 
         mPaint.setStrokeWidth(sufaceWidth);
         mPaint.setStyle(Paint.Style.STROKE);
@@ -207,7 +198,7 @@ public class TClock extends View {
         canvas.drawCircle(mWidth/2, mHeight/2, numberHeight/2, mPaint);
         //分钟指针
         canvas.save();
-        canvas.rotate(mMinute * 6 + mSecond / 10, mWidth/2, mHeight/2);
+        canvas.rotate(mMinute * 6, mWidth/2, mHeight/2);
         mPaint.setStrokeWidth(numberWidth * 3);
         mPaint.setStyle(Paint.Style.FILL);
         int x = mWidth/2;
@@ -243,39 +234,35 @@ public class TClock extends View {
 
     }
 
-    public void startRun(){
-        postInvalidateDelayed(500);
-    }
-
-    private void startInvalidateAnim() {
-        if (mValueAnimator==null) {
-            mValueAnimator = ValueAnimator.ofInt(0, 60);
-            mValueAnimator.setInterpolator(new LinearInterpolator());
-            mValueAnimator.setDuration(60 * 1000);
-            mValueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-//            mValueAnimator.setRepeatMode(ValueAnimator.);
-            mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    mSecond = (int) animation.getAnimatedValue();
-
-                    invalidate();
-                }
-            });
-            mValueAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    mMinute += 1;
-                    if (mMinute == 60) {
-                        mHour = (mHour + 1) % 12;
-                    }
-                    mMinute %= 60;
-
-                }
-            });
-        }
-        mValueAnimator.start();
-    }
+//    private void startInvalidateAnim() {
+//        if (mValueAnimator==null) {
+//            mValueAnimator = ValueAnimator.ofInt(0, 60);
+//            mValueAnimator.setInterpolator(new LinearInterpolator());
+//            mValueAnimator.setDuration(60 * 1000);
+//            mValueAnimator.setRepeatCount(ValueAnimator.INFINITE);
+////            mValueAnimator.setRepeatMode(ValueAnimator.);
+//            mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                @Override
+//                public void onAnimationUpdate(ValueAnimator animation) {
+//                    mSecond = (int) animation.getAnimatedValue();
+//
+//                    invalidate();
+//                }
+//            });
+//            mValueAnimator.addListener(new AnimatorListenerAdapter() {
+//                @Override
+//                public void onAnimationEnd(Animator animation) {
+//                    super.onAnimationEnd(animation);
+//                    mMinute += 1;
+//                    if (mMinute == 60) {
+//                        mHour = (mHour + 1) % 12;
+//                    }
+//                    mMinute %= 60;
+//
+//                }
+//            });
+//        }
+//        mValueAnimator.start();
+//    }
 
 }
