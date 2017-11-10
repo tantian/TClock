@@ -8,12 +8,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.icu.util.Calendar;
-import android.icu.util.TimeZone;
+
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by Tantian on 2017/11/10.
@@ -42,7 +44,6 @@ public class TClock extends View {
     private int mSecond = 29;
 
 //    private ValueAnimator mValueAnimator;
-
 
     public TClock(Context context) {
         super(context);
@@ -80,7 +81,6 @@ public class TClock extends View {
     /**
      * 获取时分秒
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void getTime(){
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
         mHour = calendar.get(Calendar.HOUR_OF_DAY);
